@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+
+# Blop
+# By Drew
+# Amazing logo by HexDSL
+# uoou@posteo.net
+# https://gitlab.com/uoou/blop
+# GPL v.2
+
+blogdir="$PWD" # Default behaviour is to act on the current working directory. You can specify a directory if you prefer. No trailing slash
+
+# The following settings can be overridden by placing a 'site.conf' file in the blog directory with a yaml*ish* format, i.e.:
+#
+# default_author: Rebecca Black
+# max_posts: 20
+#
+
+default_author="Drew"
+max_posts="10" # number of posts to list on the blog index, posts beyond this will listed in archive.html. Set to "unlimited" (with quotes) to archive nothing
+group_by_date=false # whether to group the main listing on the blog's index by dates
+date_format="%B %-d, %Y"
+short_date_format="%B, %Y" # format for date grouping in the archive and optionally on the index (see group_by_date above)
+listing_format="<a href=\"posts/<!--title-nospaces-->.html\"><!--title--></a> by <!--author--> on <!--date-->" # rejig this and/or remove elements to taste. You may need to change delimeter when sed is used on this later if any of the fields contain slashes
+
+#######################
+
+# load config file if it exists and assign stuff
+
+if [[ -f "$blogdir/site.conf" ]]; then
+	echo "Reading $blogdir/site.conf"
+	conf=$(cat "$blogdir/site.conf")
+	if grep -q "default_author" <<< "$conf"; then
+		default_author=$(echo "$conf" | sed -n 's/^default_author:\s\?\(.*\)$/\1/p')
+	fi
+	if grep -q "max_posts" <<< "$conf"; then
+		max_posts=$(echo "$conf" | sed -n 's/^max_posts:\s\?\(.*\)$/\1/p')
+	fi
+	if grep -q "group_by_date" <<< "$conf"; then
+		group_by_date=$(echo "$conf" | sed -n 's/^group_by_date:\s\?\(.*\)$/\1/p')
+	fi
+	if grep -q "date_format" <<< "$conf"; then
+		date_format=$(echo "$conf" | sed -n 's@^date_format:\s\?\(.*\)$@\1@p')
+	fi
+	if grep -q "short_date_format" <<< "$conf"; then
+		short_date_format=$(echo "$conf" | sed -n 's@^short_date_format:\s\?\(.*\)$@\1@p')
+	fi
+	if grep -q "listing_format" <<< "$conf"; then
+		listing_format=$(echo "$conf" | sed -n 's@^listing_format:\s\?\(.*\)$@\1@p')
+	fi
+fi
+
+do_error () {
+	if [[ ! -z "$1" ]]; then
+		echo "$1"
+	fi
+	exit
+}
+
+# Check for missing stuff and that
+if ! hash pandoc 2>/dev/null; then
+	do_error "You need pandoc. Install it!"
+fi
+if [[ ! -d "$blogdir/markdown/" ]]; then
+	do_error "Directory: $blogdir/markdown/ does not exist. It needs to exist."
+fi
+count_mds=$(ls -1 "$blogdir/markdown/"*.md 2> /dev/null | wc -l)
+if [[ "$count_mds" -eq "0" ]]; then
+	do_error "There are no markdown files in $blogdir/markdown/. There's nowt to do, pal."
+fi
+if [[ ! -f "$blogdir/url.txt" ]]; then
+	do_error "Create the file $blogdir/url.txt containing the blog's base url (without trailing slash e.g. http://example.com )"
+elif [[ ! -s "$blogdir/url.txt" ]]; then
+	do_error "The file $blogdir/url.txt must contain the blog's base url (without trailing slash e.g. http://example.com )"
+fi
+
+#Do the things
+
+if [[ ! -d "$blogdir/posts/" ]]; then
+	echo "$blogdir/posts/ doesn't exist, creating it..."
+	mkdir "$blogdir/posts/"
+else
+	echo "Deleting old HTML files in $blogdir/posts/"
+	find "$blogdir/posts/" -name "*.html" -type f -exec rm -f {} +
+fi
+rm -f "$blogdir/index.html" "$blogdir/rss.xml"
+
+url=$(cat "$blogdir/url.txt")
+temp=$(mktemp -d)
+trap 'rm -rf "$temp"' EXIT
+postcount="0"
+postlist="<ul class=\"postlist\">\n"
+
+# make listing dates line up with front matter dates
+for file in $(ls -1 "$blogdir/markdown/"*.md); do
+	cmeta=$(sed -ne '/^---$/,/^---$/ { /---/!p }' $file)
+	cmetadate=$(echo "$cmeta" | sed -n 's/^date:\s\?\(.*\)$/\1/p')
+	cmdate=$(date -d "`stat -c %y "$file"`" +"%F")
+	if [[ ! -z "$cmetadate" ]] && date -d "$cmetadate" > /dev/null 2>&1; then
+		cmetafdate=$(date -d "$cmetadate" +"%F")
+		if [[ "$cmetafdate" != "$cmdate" ]]; then
+			touch -d "$cmetafdate" "$file"
+		fi
+	fi
+done
+
+# Messy loop that does all the work
+for file in $(ls -t1 "$blogdir/markdown/"*.md); do
+	postcount=$((postcount+1))
+	meta=$(sed -ne '/^---$/,/^---$/ { /---/!p }' $file)
+	title=$(echo "$meta" | sed -n 's/^title:\s\?\(.*\)$/\1/p')
+	summary=$(echo "$meta" | sed -n 's/^summary:\s\?\(.*\)$/\1/p')
+	author=$(echo "$meta" | sed -n 's/^author:\s\?\(.*\)$/\1/p')
+	if [[ -z "$title" ]]; then
+		filebase=$(basename "$file")
+		title=$(echo "${filebase%.md}" | sed 's/[-_]/ /g')
+	fi
+	title_nospaces=$(echo "$title" | sed -e 's/\s/-/g' -e 's/"//g' | awk '{print tolower($0)}')
+	udate=$(date -d "`stat -c %y "$file"`" +"%s")
+	date=$(date -d "@$udate" +"$date_format")
+	short_date=$(date -d "@$udate" +"$short_date_format")
+	rssdate=$(date -d "@$udate" +"%a, %d %b %Y %H:%M:%S %z")
+	if [[ -z "$author" ]]; then
+		author=$default_author
+	fi
+	echo "Making \"$title\""
+	pandoc <<<$(cat $file | sed '/^---$/,/^---$/d') > "$temp"/post
+	listitem=$(echo "$listing_format" | sed -e "s/<!--title-nospaces-->/$title_nospaces/g" -e "s/<!--title-->/$title/g" -e "s@<!--date-->@$date@g" -e "s/<!--author-->/$author/g" -e "s/<!--summary-->/$summary/g")
+	if [[ "$max_posts" = "unlimited" ]] || [[ $postcount -le $max_posts ]]; then
+		# Put it on the front page
+		if [[ "$group_by_date" = true ]]; then
+			if [[ -z "$old_short_date" ]]; then
+				postlist="<h3 class=\"postdate\">$short_date</h3>\n<ul class=\"postlist\">\n"
+			elif [[ "$short_date" != "$old_short_date" ]]; then
+				postlist="$postlist</ul>\n<h3/tmp/tmp.l8wnIuvXUp/post class=\"postdate\">$short_date</h3>\n<ul class=\"postlist\">\n"
+			fi
+		fi
+		postlist="$postlist<li>$listitem</li>\n"
+	fi 
+	#Put it in the archive
+	if [[ -z "$archivelist" ]]; then 
+		archivelist="<h3 class=\"archivedate\">$short_date</h3>\n<ul class=\"archivelist\">\n"
+	elif [[ "$short_date" != "$old_short_date" ]]; then
+		archivelist="$archivelist</ul>\n<h3 class=\"archivedate\">$short_date</h3>\n<ul class=\"archivelist\">\n"
+	fi
+	archivelist="$archivelist<li>$listitem</li>\n"
+	old_short_date=$short_date
+
+	sed -e "/<!--post-->/r $temp/post" -e '/<!--post-->/d' -e "s/<!--author-->/$author/g" -e "s/<!--date-->/$date/g" -e "s/<!--title-->/$title/g" "$blogdir/post_template.html" > "$blogdir/posts/$title_nospaces.html"
+	# prepare rss
+	echo -e "<item>\n<title>$title</title>\n<guid>$url/posts/$title_nospaces.html</guid>\n<pubDate>$rssdate</pubDate><description><![CDATA[$(cat $temp/post)]]></description>\n</item>\n\n" >> $temp/rss 
+done
+
+echo "Creating index.html"
+postlist="$postlist</ul>"
+echo -e "$postlist" > "$temp"/list
+sed -e "/<!--post list-->/r $temp/list" -e '/<!--post list-->/d' "$blogdir/index_template.html" > "$blogdir/index.html"
+
+if [[ "$max_posts" != "unlimited" ]]; then
+	echo "Creating archive.html"
+	archivelist="$archivelist</ul>"
+	echo -e "$archivelist" > "$temp"/archivelist
+	sed -e "/<!--archive list-->/r $temp/archivelist" -e '/<!--archive list-->/d' "$blogdir/archive_template.html" > "$blogdir/archive.html"
+fi
+
+echo "Creating RSS"
+sed -e "/<!--rss-->/r $temp/rss" -e "s@<!--url-->@$url@g" -e '/<!--rss-->/d' "$blogdir/rss_template.xml" > "$blogdir/rss.xml" # we use @ as delimeter here because replacement text contains slashes. If your sites url contains an @ for some reason, use a delimeter that doesn't appear in the url
+
+echo "All done"
