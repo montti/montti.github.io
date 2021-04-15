@@ -14,16 +14,6 @@ html {
 	--bg_grey: #eee;
 	--dark_grey: #999;
 }
-[data-theme="dark"] {
-	--bg: #222;
-	--fg: #fefefe;
-	--link: #4d7dcb;
-	--link_v: #99a5d3;
-	--link_h: #4c7ecf;
-	--bg_grey: #333;
-	--dark_grey: #333;
-}
-
 
 .logo {
 	max-height: 30px
@@ -32,7 +22,7 @@ html {
 body {
 	color: var(--fg);
 	font-family: 'Open Sans', sans-serif;
-	font-size: 12px;
+	font-size: 16px;
 	line-height: 1.5em;
 	padding: 1em;
 	margin: auto;
@@ -201,7 +191,7 @@ td {
 
 @media only screen and (max-width: 768px) {
 	body {
-		font-size: 14px;
+		font-size: 16px;
 	}
 	.sitename {
 		display: none;
