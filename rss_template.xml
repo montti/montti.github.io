@@ -2,8 +2,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 
 <channel>
-<title>Dison oso Haus</title>
-<description>Drew's blog</description>
+<title>montti</title>
+<description>montti's blog</description>
 <language>en-gb</language>
 <link><!--url-->/rss.xml</link>
 <atom:link href="<!--url-->/rss.xml" rel="self" type="application/rss+xml" />
