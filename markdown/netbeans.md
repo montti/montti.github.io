@@ -14,7 +14,7 @@ If *that* didn't work...
 ## Archive Downloads
 
 I took the liberty of putting all the installation files in 
-[archive.org](https://archive.org/details/jdk-8u111-nb-8_2) and obviously I didn't modify them but you just need to trust me ;) (don't).
+[archive.org](https://archive.org/details/jdk-8u111-nb-8_2) and obviously I didn't modify them but you just need to trust me ;) (don't)
 
 (The installation file is a co-bundle with the compatible Java version)
 
