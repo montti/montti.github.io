@@ -2,7 +2,7 @@
 title: So... you need to download NetBeans 8.2 in $CURRENT_YEAR
 ---
 
-Maybe your institution curriculum is outdated and using this version is mandatory or maybe there's some software environment that *just* doesn't work with anything else, or maybe you just like old software.
+Maybe your institution curriculum is outdated and using this version is mandatory or maybe there's some software environment that *just* doesn't work with anything else, or you just like old software.
 
 ## First things first
 
@@ -16,7 +16,7 @@ If *that* didn't work...
 ## Archive Downloads
 
 I took the liberty of putting all the installation files in 
-[archive.org](https://archive.org/details/jdk-8u111-nb-8_2) and obviously didn't modify them but you just need to trust me.
+[archive.org](https://archive.org/details/jdk-8u111-nb-8_2) and obviously didn't modify them but you just need to trust me (don't).
 
 (The installation file is a co-bundle with the compatible Java version)
 
