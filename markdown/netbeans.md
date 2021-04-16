@@ -7,9 +7,7 @@ Maybe your institution curriculum is outdated and using this version is mandator
 ## First things first
 
 If you stumbled upon this page the official download links probably disappeared, again, but just in case please look around [NetBeans webpage](https://netbeans.apache.org/download/index.html) or 
-[Oracle's](https://www.oracle.com/downloads/).
-
-The last working link was [this one](https://www.oracle.com/technetwork/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html). I insist on getting your downloads from an official site because even if I'm swell guy, downloading random .exe and .sh from the internet is a Bad Idea™.
+[Oracle's](https://www.oracle.com/downloads/). The last working link was [this one](https://www.oracle.com/technetwork/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html). I insist on getting your downloads from an official site because even if I'm swell guy, downloading random .exe and .sh from the internet is a Bad Idea™.
 
 If *that* didn't work...
 
