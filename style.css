@@ -22,7 +22,7 @@ html {
 body {
 	color: var(--fg);
 	font-family: 'Open Sans', sans-serif;
-	font-size: 22px;
+	font-size: 18px;
 	line-height: 1.5em;
 	padding: 1em;
 	margin: auto;
@@ -210,7 +210,7 @@ nav > div > ul > li > a {
 }
 
 nav > div.nav-right > ul > li > a {
-	padding: 0.5em 0.5em;
+	padding: 1em 1em;
 }
 
 nav > div > ul > li > a:hover {
