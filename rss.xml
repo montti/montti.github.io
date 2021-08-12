@@ -9,9 +9,24 @@
 <atom:link href="https://montti.github.io/rss.xml" rel="self" type="application/rss+xml" />
 
 <item>
+<title>Literally just an oatmeal cookie recipe</title>
+<guid>https://montti.github.io/posts/literally-just-an-oatmeal-cookie-recipe.html</guid>
+<pubDate>Thu, 12 Aug 2021 01:27:37 -0400</pubDate><description><![CDATA[<p>test</p>
+<h2 id="test">test</h2>
+<p>test, <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>This is the first footnote.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>]]></description>
+</item>
+
+
+<item>
 <title>So... you need to download NetBeans 8.2 in $CURRENT_YEAR</title>
 <guid>https://montti.github.io/posts/so...-you-need-to-download-netbeans-8.2-in-$current_year.html</guid>
-<pubDate>Fri, 16 Apr 2021 18:29:30 -0400</pubDate><description><![CDATA[<p>Maybe your institution curriculum is outdated and using this version is mandatory or maybe there’s some software environment that <em>just</em> doesn’t work with anything else, or you just like old software.</p>
+<pubDate>Thu, 12 Aug 2021 01:18:20 -0400</pubDate><description><![CDATA[<p>Maybe your institution curriculum is outdated and using this version is mandatory or maybe there’s some software environment that <em>just</em> doesn’t work with anything else, or you just like old software.</p>
 <h2 id="first-things-first">First things first</h2>
 <p>If you stumbled upon this page the official download links probably disappeared, again, but just in case please look around <a href="https://netbeans.apache.org/download/index.html">NetBeans webpage</a> or <a href="https://www.oracle.com/downloads/">Oracle’s</a>. The last working link was <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html">this one</a>. I insist on getting your downloads from an official site because even if I’m swell guy, downloading random .exe and .sh from the internet is a Bad Idea™.</p>
 <p>If <em>that</em> didn’t work…</p>
